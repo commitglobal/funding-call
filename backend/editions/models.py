@@ -1,8 +1,10 @@
 from django.db import models
 
+from utils.translation import TranslateableTextField
+
 
 class Edition(models.Model):
-    pass
+    title = TranslateableTextField(verbose_name="Title")
 
 
 class EditionRelatedModel(models.Model):
