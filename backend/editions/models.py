@@ -3,10 +3,11 @@ from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 
 from users.models import User
+from utils.models import CommonTimeStampModel
 from utils.translation import TranslateableTextField
 
 
-class Edition(models.Model):
+class Edition(CommonTimeStampModel):
     """
     Data about an edition
     """
@@ -15,9 +16,12 @@ class Edition(models.Model):
     description = TranslateableTextField(verbose_name="Description")
     jury_users = models.ManyToManyField(User)
 
-    class Meta:
+    class Meta:  # type: ignore
         verbose_name = _("edition")
         verbose_name_plural = _("editions")
+
+    def __str__(self) -> str:
+        return _("Edition {id}: {title}").format(id=self.pk, title=self.title)
 
 
 class EditionRelatedModel(models.Model):
@@ -39,7 +43,7 @@ class EditionRelatedModel(models.Model):
         return cls.objects.filter(edition__isnull=True).all()
 
 
-class FinancingDomain(EditionRelatedModel):
+class FinancingDomain(EditionRelatedModel, CommonTimeStampModel):
     title = TranslateableTextField(verbose_name="Title")
 
     class Meta:  # type: ignore
@@ -47,28 +51,28 @@ class FinancingDomain(EditionRelatedModel):
         verbose_name = _("financing domain")
         verbose_name_plural = _("financing domains")
 
-    def __str__(self):
-        if self.edition:
-            return f"{self.edition.title}: {self.title}"
-        else:
-            return f"{self.title}"
+    def __str__(self) -> str:
+        return _("Financing Domain {id}: {title}").format(id=self.pk, title=self.title)
 
 
-class EditionStage(EditionRelatedModel):
+class EditionStage(EditionRelatedModel, CommonTimeStampModel):
     """
     Data about an edition stage 
     """
 
     title = TranslateableTextField(verbose_name="Title")
     description = TranslateableTextField(verbose_name="Description")
-    requires_jury = models.BooleanField(default=False)    
-    requires_form = models.BooleanField(default=False)
     begins_on = models.DateTimeField()
     ends_on= models.DateTimeField()
+    requires_form = models.BooleanField(default=False)
+    requires_jury = models.BooleanField(default=False)    
 
     class Meta:  # type: ignore
         verbose_name = _("edition stage")
         verbose_name_plural = _("edition stages")
+
+    def __str__(self) -> str:
+        return _("Edition Stage {id}: {title}").format(id=self.pk, title=self.title)
 
 
 class EditionStageRelatedModel(models.Model):
@@ -90,16 +94,20 @@ class EditionStageRelatedModel(models.Model):
         return cls.objects.filter(edition_stage__isnull=True).all()
 
 
-
-class Project(EditionRelatedModel):
+class Project(EditionRelatedModel, CommonTimeStampModel):
     """
     Project metadata and configuration
     """
 
+    title = TranslateableTextField(verbose_name="Title")
+
     class Meta:  # type: ignore
         verbose_name = _("project")
         verbose_name_plural = _("projects")
-
+    
+    def __str__(self) -> str:
+        return _("Project {id}: {title}").format(id=self.pk, title=self.title)
+    
 
 class ProjectRelatedModel(models.Model):
     """
@@ -120,7 +128,7 @@ class ProjectRelatedModel(models.Model):
         return cls.objects.filter(project__isnull=True).all()
 
 
-class ProjectDocument(ProjectRelatedModel):
+class ProjectDocument(ProjectRelatedModel, CommonTimeStampModel):
     """
     Uploaded project files
     """
@@ -130,22 +138,37 @@ class ProjectDocument(ProjectRelatedModel):
         verbose_name_plural = _("project documents")
 
 
-class ProjectComment(ProjectRelatedModel):
+class TopLevelCommentManager(models.Manager):
+    """
+    Look for comments which are not a reply to another comment
+    """
+
+    def get_queryset(self):
+        return super().get_queryset().filter(parent_comment__isnull=True)
+
+
+class ProjectComment(ProjectRelatedModel, CommonTimeStampModel):
     """
     User comment about a project
     """
     
+    author = models.ForeignKey(User, on_delete=models.SET_NULL)
+    parent_comment = models.ForeignKey("ProjectComment", on_delete=models.CASCADE)
     title = TranslateableTextField(verbose_name="Title")
     message = TranslateableTextField(verbose_name="Message")
-    parent_comment = models.ForeignKey("ProjectComment", on_delete=models.CASCADE)
+
+    objects = models.Manager()
+    top_level = TopLevelCommentManager()
 
     class Meta:  # type: ignore
         verbose_name = _("project comment")
         verbose_name_plural = _("project comments")
+    
+    def __str__(self) -> str:
+        return _("Project Comment {id}: {title}").format(id=self.pk, title=self.title)
 
 
-
-class ProjectJury(EditionStageRelatedModel, ProjectRelatedModel):
+class ProjectJury(EditionStageRelatedModel, ProjectRelatedModel, CommonTimeStampModel):
     """
     Project jury assignment for an edition stage
     """
@@ -156,7 +179,6 @@ class ProjectJury(EditionStageRelatedModel, ProjectRelatedModel):
         verbose_name = _("project jury")
         verbose_name_plural = _("project juries")
 
-
     @classmethod
     def sweep_items(cls) -> QuerySet:
         """
@@ -164,9 +186,15 @@ class ProjectJury(EditionStageRelatedModel, ProjectRelatedModel):
         """
 
         return cls.objects.filter(edition__isnull=True).all() | cls.objects.filter(project__isnull=True).all()
+    
+    def __str__(self) -> str:
+        return _("Project {project_id} Stage {edition_stage_id} Jury").format(
+            project_id=self.project.pk if self.project else 0,
+            edition_stage_id=self.edition_stage.pk if self.edition_stage else 0,
+        )
 
 
-class JuryScorecard(ProjectRelatedModel):
+class JuryScorecard(ProjectRelatedModel, CommonTimeStampModel):
     """
     One jury user's score card for a project
     """
@@ -176,3 +204,6 @@ class JuryScorecard(ProjectRelatedModel):
     class Meta:  # type: ignore
         verbose_name = _("jury scorecard")
         verbose_name_plural = _("jury scorecards")
+
+    def __str__(self) -> str:
+        return _("Jury Scorecard {id}").format(id=self.pk)
