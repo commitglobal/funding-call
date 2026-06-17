@@ -1,7 +1,15 @@
+from hashlib import blake2b
+
+from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from utils.models import CommonTimeStampModel
 from users.models import User
+
+
+def build_organization_document_storage_path(document, filename) -> str:
+    return "{0}/organization/{1}".format(document.get_base_directory_path(), filename[-100:])
 
 
 class Organization(CommonTimeStampModel):
@@ -10,6 +18,23 @@ class Organization(CommonTimeStampModel):
     """
 
     users = models.ManyToManyField(User)
+
+    class Meta:  # type: ignore
+        verbose_name = _("organization")
+        verbose_name_plural = _("organizations")
+
+    def get_base_directory(self, public=False) -> str:
+        """
+        Build the base directory name for file storage
+        """
+
+        organization_hash: str = blake2b(
+            f"ORGANIZATION PK={self.pk} KH={settings.SECRET_KEY_HASH}".encode(), 
+            digest_size=4, 
+            usedforsecurity=False
+        ).hexdigest().lower()
+
+        return f"organization-{self.pk}-{organization_hash}" + ("-public" if public else "")
 
 
 class OrganizationRelatedModel(models.Model):
@@ -23,26 +48,50 @@ class OrganizationRelatedModel(models.Model):
         abstract = True
 
 
-class OrganizationData(OrganizationRelatedModel):
+class OrganizationDetails(OrganizationRelatedModel, CommonTimeStampModel):
     """
     Information about an organization
     """
 
-    pass
+    data = models.JSONField(default=dict, blank=True, null=False)
+
+    class Meta:  # type: ignore
+        verbose_name = _("organization details")
+        verbose_name_plural = _("organization details")
 
 
-class OrganizationDataSnapshot(OrganizationData):
+class OrganizationDetailsSnapshot(OrganizationDetails):
     """
-    Preferably read-only, historical copy of an organization's data
+    Preferably read-only, historical copy of an organization's details
     """
 
-    pass
+    class Meta:  # type: ignore
+        verbose_name = _("organization details snapshot")
+        verbose_name_plural = _("organization details snapshots")
 
 
-class OrganizationDocument(OrganizationData):
+class OrganizationDocument(OrganizationDetails):
     """
     Uploaded organization files
     """
 
-    pass
+    uploaded_document = models.FileField(
+        verbose_name=_("uploaded document"),
+        upload_to=build_organization_document_storage_path,
+        blank=True,
+        null=True,
+    )
+    linked_document_url = models.CharField(
+        verbose_name=_("linked document URL"),
+        max_length=2048,
+        blank=True,
+        null=False,
+        default="",
+        help_text=_("If the user entered a link instead of a file upload"),
+    )
+
+    class Meta:  # type: ignore
+        verbose_name = _("organization document")
+        verbose_name_plural = _("organization documents")
+
 

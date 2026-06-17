@@ -1,6 +1,7 @@
-
+import hashlib
 from decimal import Decimal
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -24,8 +25,8 @@ class Edition(CommonTimeStampModel):
     """
 
     # Description settings
-    title = TranslateableTextField(verbose_name="Title")
-    description = TranslateableTextField(verbose_name="Description")
+    title = TranslateableTextField(verbose_name="Title", blank=True, null=False, default=dict)
+    description = TranslateableTextField(verbose_name="Description", blank=True, null=False, default=dict)
 
     # Jury settings
     jury_users = models.ManyToManyField(User)
@@ -80,6 +81,17 @@ class Edition(CommonTimeStampModel):
         if commit:
             self.save()
 
+    def get_base_directory(self, public=False) -> str:
+        """
+        Build the base directory name for file storage
+        """
+
+        edition_hash: str = hashlib.blake2b(
+            f"EDITION PK={self.pk} KH={settings.SECRET_KEY_HASH}".encode(), digest_size=4, usedforsecurity=False
+        ).hexdigest().lower()
+
+        return f"edition-{self.pk}-{edition_hash}" + ("-public" if public else "")
+
 
 class EditionRelatedModel(models.Model):
     """
@@ -131,7 +143,7 @@ class EditionPublicDocument(EditionRelatedModel, CommonTimeStampModel):
 
 
 class FinancingDomain(EditionRelatedModel, CommonTimeStampModel):
-    title = TranslateableTextField(verbose_name="Title")
+    title = TranslateableTextField(verbose_name="Title", blank=True, null=False, default=dict)
 
     class Meta:  # type: ignore
         ordering = ("name",)
@@ -148,8 +160,8 @@ class EditionStage(EditionRelatedModel, CommonTimeStampModel):
     Data about an edition stage 
     """
 
-    title = TranslateableTextField(verbose_name="Title")
-    description = TranslateableTextField(verbose_name="Description")
+    title = TranslateableTextField(verbose_name="Title", blank=True, null=False, default=dict)
+    description = TranslateableTextField(verbose_name="Description", blank=True, null=False, default=dict)
     begins_on = models.DateTimeField()
     ends_on= models.DateTimeField()
     requires_form = models.BooleanField(default=False)
@@ -188,7 +200,7 @@ class Project(EditionRelatedModel, CommonTimeStampModel):
     Project metadata and configuration
     """
 
-    title = TranslateableTextField(verbose_name="Title")
+    title = TranslateableTextField(verbose_name="Title", blank=True, null=False, default=dict)
 
     class Meta:  # type: ignore
         verbose_name = _("project")
@@ -197,6 +209,17 @@ class Project(EditionRelatedModel, CommonTimeStampModel):
     def __str__(self) -> str:
         return _("(Edition {edition_id}) Project {id}: {title}").format(
             edition_id=self.edition.pk if self.edition else 0, id=self.pk, title=self.title)
+
+    def get_base_directory(self, public=False) -> str:
+        """
+        Build the base directory name for file storage
+        """
+
+        project_hash: str = hashlib.blake2b(
+            f"PROJECT PK={self.pk} KH={settings.SECRET_KEY_HASH}".encode(), digest_size=4, usedforsecurity=False
+        ).hexdigest().lower()
+
+        return f"project-{self.pk}-{project_hash}" + ("-public" if public else "")
     
 
 class ProjectRelatedModel(models.Model):
@@ -263,8 +286,8 @@ class ProjectComment(ProjectRelatedModel, CommonTimeStampModel):
     
     author = models.ForeignKey(User, on_delete=models.SET_NULL)
     parent_comment = models.ForeignKey("ProjectComment", on_delete=models.CASCADE)
-    title = TranslateableTextField(verbose_name="Title")
-    message = TranslateableTextField(verbose_name="Message")
+    title = TranslateableTextField(verbose_name="Title", blank=True, null=False, default=dict)
+    message = TranslateableTextField(verbose_name="Message", blank=True, null=False, default=dict)
 
     objects = models.Manager()
     top_level = TopLevelCommentManager()
