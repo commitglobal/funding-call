@@ -1,15 +1,9 @@
-from hashlib import blake2b
-
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from utils.models import CommonTimeStampModel
 from users.models import User
-
-
-def build_organization_document_storage_path(document, filename) -> str:
-    return "{0}/organization/{1}".format(document.get_base_directory_path(), filename[-100:])
 
 
 class Organization(CommonTimeStampModel):
@@ -22,19 +16,6 @@ class Organization(CommonTimeStampModel):
     class Meta:  # type: ignore
         verbose_name = _("organization")
         verbose_name_plural = _("organizations")
-
-    def get_base_directory(self, public=False) -> str:
-        """
-        Build the base directory name for file storage
-        """
-
-        organization_hash: str = blake2b(
-            f"ORGANIZATION PK={self.pk} KH={settings.SECRET_KEY_HASH}".encode(), 
-            digest_size=4, 
-            usedforsecurity=False
-        ).hexdigest().lower()
-
-        return f"organization-{self.pk}-{organization_hash}" + ("-public" if public else "")
 
 
 class OrganizationRelatedModel(models.Model):
@@ -77,7 +58,7 @@ class OrganizationDocument(OrganizationDetails):
 
     uploaded_document = models.FileField(
         verbose_name=_("uploaded document"),
-        upload_to=build_organization_document_storage_path,
+        upload_to="orgs/%Y/%m/",
         blank=True,
         null=True,
     )

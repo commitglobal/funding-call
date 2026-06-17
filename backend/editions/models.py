@@ -1,4 +1,3 @@
-import hashlib
 from decimal import Decimal
 
 from django.conf import settings
@@ -9,14 +8,6 @@ from users.models import User
 from utils.models import CommonTimeStampModel
 from utils.storage import select_public_storage
 from utils.translation import TranslateableTextField
-
-
-def build_edition_public_document_storage_path(document, filename) -> str:
-    return "{0}/edition_public/{1}".format(document.get_base_directory_path(), filename[-100:])
-
-
-def build_project_document_storage_path(document, filename) -> str:
-    return "{0}/project/{1}".format(document.get_base_directory_path(), filename[-100:])
 
 
 class Edition(CommonTimeStampModel):
@@ -81,17 +72,6 @@ class Edition(CommonTimeStampModel):
         if commit:
             self.save()
 
-    def get_base_directory(self, public=False) -> str:
-        """
-        Build the base directory name for file storage
-        """
-
-        edition_hash: str = hashlib.blake2b(
-            f"EDITION PK={self.pk} KH={settings.SECRET_KEY_HASH}".encode(), digest_size=4, usedforsecurity=False
-        ).hexdigest().lower()
-
-        return f"edition-{self.pk}-{edition_hash}" + ("-public" if public else "")
-
 
 class EditionRelatedModel(models.Model):
     """
@@ -119,7 +99,7 @@ class EditionPublicDocument(EditionRelatedModel, CommonTimeStampModel):
 
     uploaded_document = models.FileField(
         verbose_name=_("uploaded document"),
-        upload_to=build_edition_public_document_storage_path,
+        upload_to="editions_public/%Y/%m/",
         storage=select_public_storage,
         blank=True,
         null=True,
@@ -209,17 +189,6 @@ class Project(EditionRelatedModel, CommonTimeStampModel):
     def __str__(self) -> str:
         return _("(Edition {edition_id}) Project {id}: {title}").format(
             edition_id=self.edition.pk if self.edition else 0, id=self.pk, title=self.title)
-
-    def get_base_directory(self, public=False) -> str:
-        """
-        Build the base directory name for file storage
-        """
-
-        project_hash: str = hashlib.blake2b(
-            f"PROJECT PK={self.pk} KH={settings.SECRET_KEY_HASH}".encode(), digest_size=4, usedforsecurity=False
-        ).hexdigest().lower()
-
-        return f"project-{self.pk}-{project_hash}" + ("-public" if public else "")
     
 
 class ProjectRelatedModel(models.Model):
@@ -248,7 +217,7 @@ class ProjectDocument(ProjectRelatedModel, CommonTimeStampModel):
 
     uploaded_document = models.FileField(
         verbose_name=_("uploaded document"),
-        upload_to=build_project_document_storage_path,
+        upload_to="projects/%Y/%m/",
         blank=True,
         null=True,
     )
