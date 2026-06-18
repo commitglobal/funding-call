@@ -135,17 +135,42 @@ class FinancingDomain(EditionRelatedModel, CommonTimeStampModel):
             edition_id=self.edition.pk if self.edition else 0, id=self.pk, title=self.title)
 
 
+class JuryForm(CommonTimeStampModel):
+    title = TranslateableTextField(verbose_name="Title", blank=True, null=False, default=dict)
+    fieldset = models.JSONField(blank=True, null=False, default=dict)
+    min_score = models.PositiveSmallIntegerField(blank=True, null=False, default=0)
+    max_score = models.PositiveSmallIntegerField(blank=True, null=False, default=10)
+
+    class Meta:  # type: ignore
+        pass
+
+
+class ProjectForm(CommonTimeStampModel):
+    title = TranslateableTextField(verbose_name="Title", blank=True, null=False, default=dict)
+    fieldset = models.JSONField(blank=True, null=False, default=dict)
+
+    class Meta:  # type: ignore
+        pass
+
+
 class EditionStage(EditionRelatedModel, CommonTimeStampModel):
     """
     Data about an edition stage 
     """
 
+    class StageTypeChoices(models.TextChoices):
+        FORM = "FORM", _("Form Completion")
+        JURY = "JURY", _("Jury Scoring")
+        OTHER = "OTHER", _("Other")
+
     title = TranslateableTextField(verbose_name="Title", blank=True, null=False, default=dict)
+    stage_type = models.CharField(
+        max_length=5, blank=False, null=False, choices=StageTypeChoices, default=StageTypeChoices.FORM)
     description = TranslateableTextField(verbose_name="Description", blank=True, null=False, default=dict)
     begins_on = models.DateTimeField()
     ends_on= models.DateTimeField()
-    requires_form = models.BooleanField(default=False)
-    requires_jury = models.BooleanField(default=False)    
+    project_form = models.ForeignKey(ProjectForm, blank=True, null=True, on_delete=models.SET_NULL)
+    jury_form = models.ForeignKey(JuryForm, blank=True, null=True, on_delete=models.SET_NULL)
 
     class Meta:  # type: ignore
         verbose_name = _("edition stage")
