@@ -51,7 +51,7 @@ class OrganizationDetailsSnapshot(OrganizationDetails):
         verbose_name_plural = _("organization details snapshots")
 
 
-class OrganizationDocument(OrganizationDetails):
+class OrganizationDocument(OrganizationRelatedModel):
     """
     Uploaded organization files
     """
@@ -70,9 +70,16 @@ class OrganizationDocument(OrganizationDetails):
         default="",
         help_text=_("If the user entered a link instead of a file upload"),
     )
+    referencing_snapshots = models.ManyToManyField(
+        OrganizationDetailsSnapshot, verbose_name="referencing snapshots", blank=True, null=True
+    )
 
     class Meta:  # type: ignore
         verbose_name = _("organization document")
         verbose_name_plural = _("organization documents")
+
+    @staticmethod
+    def sweep_items() -> models.QuerySet:
+        return OrganizationDocument.objects.filter(organization__isnull=True, referencing_snapshots__set=None).all()
 
 
