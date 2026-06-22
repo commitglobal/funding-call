@@ -1,6 +1,5 @@
 from decimal import Decimal
 
-from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -52,6 +51,12 @@ class Edition(CommonTimeStampModel):
     # Computed data from related models
     cached_begins_on = models.DateTimeField(editable=False, blank=True, null=True)
     cached_ends_on= models.DateTimeField(editable=False, blank=True, null=True)
+
+    # Type hinting for related models
+    editionstage_set: "models.manager.RelatedManager[EditionStage]"
+
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("edition")
@@ -114,6 +119,9 @@ class EditionPublicDocument(EditionRelatedModel, CommonTimeStampModel):
         default="",
         help_text=_("If the user entered a link instead of a file upload"),
     )
+    
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("edition public document")
@@ -126,6 +134,9 @@ class EditionPublicDocument(EditionRelatedModel, CommonTimeStampModel):
 
 class FinancingDomain(EditionRelatedModel, CommonTimeStampModel):
     title = TranslateableTextField(verbose_name="title", blank=True, null=False, default=dict)
+
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         ordering = ("name",)
@@ -144,6 +155,9 @@ class JuryForm(CommonTimeStampModel):
         verbose_name="minimum score", blank=True, null=False, default=0)
     max_score = models.PositiveSmallIntegerField(
         verbose_name="maximum score", blank=True, null=False, default=10)
+    
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("jury form")
@@ -156,6 +170,9 @@ class JuryForm(CommonTimeStampModel):
 class ProjectForm(CommonTimeStampModel):
     title = TranslateableTextField(verbose_name="title", blank=True, null=False, default=dict)
     fieldset = FieldsetField(verbose_name="fieldset", blank=True, null=False, default=dict)
+
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("project form")
@@ -184,6 +201,9 @@ class EditionStage(EditionRelatedModel, CommonTimeStampModel):
     ends_on= models.DateTimeField(verbose_name="ends on",blank=False, null=False)
     project_form = models.ForeignKey(ProjectForm, verbose_name="project form", blank=True, null=True, on_delete=models.SET_NULL)
     jury_form = models.ForeignKey(JuryForm, verbose_name="jury form", blank=True, null=True, on_delete=models.SET_NULL)
+
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("edition stage")
@@ -220,6 +240,9 @@ class Project(EditionRelatedModel, CommonTimeStampModel):
     """
 
     title = TranslateableTextField(verbose_name="title", blank=True, null=False, default=dict)
+
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("project")
@@ -269,6 +292,7 @@ class ProjectComment(ProjectRelatedModel, CommonTimeStampModel):
     title = TranslateableTextField(verbose_name="title", blank=True, null=False, default=dict)
     message = TranslateableTextField(verbose_name="message", blank=True, null=False, default=dict)
 
+    # Model managers
     objects = models.Manager()
     top_level = TopLevelCommentManager()
 
@@ -291,6 +315,9 @@ class ProjectJury(EditionStageRelatedModel, ProjectRelatedModel, CommonTimeStamp
         editable=False, null=False, default=0)
     cached_average_score = models.FloatField(
         editable=False, null=False, default=0)
+    
+    # Model managers
+    objects = models.Manager()
     
     class Meta:  # type: ignore
         verbose_name = _("project jury")
@@ -322,6 +349,9 @@ class JuryScorecard(EditionStageRelatedModel, ProjectRelatedModel, CommonTimeSta
     data = models.JSONField(verbose_name="data", null=True, blank=True)
     total_score = models.PositiveSmallIntegerField(
         editable=False, null=False, default=0)
+    
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("jury scorecard")
@@ -337,6 +367,9 @@ class JuryScorecard(EditionStageRelatedModel, ProjectRelatedModel, CommonTimeSta
 
 class ProjectData(EditionStageRelatedModel, ProjectRelatedModel, CommonTimeStampModel):
     data = models.JSONField(verbose_name="data", null=True, blank=True)
+
+    # Model managers
+    objects = models.Manager()
     
     class Meta:  # type: ignore
         verbose_name = _("project data")
@@ -387,6 +420,9 @@ class ProjectDataDocument(ProjectDataRelatedModel, CommonTimeStampModel):
         default="",
         help_text=_("If the user entered a link instead of a file upload"),
     )
+
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("project data document")

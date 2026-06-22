@@ -11,7 +11,10 @@ class Organization(CommonTimeStampModel):
     Organization metadata and configuration
     """
 
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User, verbose_name="users")
+
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("organization")
@@ -34,7 +37,10 @@ class OrganizationDetails(OrganizationRelatedModel, CommonTimeStampModel):
     Information about an organization
     """
 
-    data = models.JSONField(default=dict, blank=True, null=False)
+    data = models.JSONField(verbose_name="organization details", default=dict, blank=True, null=False)
+
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("organization details")
@@ -73,6 +79,9 @@ class OrganizationDocument(OrganizationRelatedModel):
     referencing_snapshots = models.ManyToManyField(
         OrganizationDetailsSnapshot, verbose_name="referencing snapshots", blank=True, null=True
     )
+
+    # Model managers
+    objects = models.Manager()
 
     class Meta:  # type: ignore
         verbose_name = _("organization document")
