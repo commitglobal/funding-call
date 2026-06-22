@@ -37,6 +37,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third party apps:
+    "auditlog",
+    "corsheaders",
+    "csp",
+    "django_q",
+    "django_recaptcha",
+    "django_vite",
+    "inertia",
+    "localflavor",
+    "storages",
+    # Funding Call apps:
+    "editions",
+    "orgs",
+    "users",
 ]
 
 MIDDLEWARE = [
