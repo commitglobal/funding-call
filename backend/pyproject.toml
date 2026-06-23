@@ -5,12 +5,31 @@ description = "Funding Call"
 requires-python = ">=3.13"
 
 dependencies = [
+    "blessed~=1.44.0",
+    "chardet~=7.4.3",
     "django~=6.0.6",
     "django-auditlog~=3.4.1",
     "django-cors-headers~=4.9.0",
     "django-csp~=4.0.0",
+    "django-environ~=0.14.0",
+    "django-localflavor~=5.0.0",
+    "django-q2~=1.10.0",
+    "django-recaptcha~=4.1.0",
+    "django-ses~=4.7.2",
+    "django-storages[azure]~=1.14.6",
+    "django-vite~=3.1.0",
+    "gevent~=26.5.0",
+    "gunicorn~=26.0.0",
+    "inertia-django~=1.2.0",
+    "pillow~=12.2.0",
+    "psutil~=7.2.2",
     "psycopg2-binary~=2.9.12",
     "pymysql~=1.2.0",
+    "reportlab~=5.0.0",
+    "requests~=2.34.2",
+    "sentry-sdk[django]~=2.63.0",
+    "unidecode~=1.4.0",
+    "whitenoise~=6.12.0",
 ]
 
 
@@ -25,7 +44,7 @@ test = [
     "tblib~=3.2.2",
 ]
 ruff = [
-    "ruff~=0.15.16",
+    "ruff~=0.15.18",
 ]
 dev = [
     "debugpy~=1.8.20",
