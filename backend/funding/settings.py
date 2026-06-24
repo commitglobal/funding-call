@@ -479,8 +479,6 @@ EMAIL_VERIFICATION_EXPIRY_TIME = timedelta(hours=env.int("EMAIL_VERIFICATION_EXP
 TWO_FACTOR_AUTH_EXPIRY_TIME = timedelta(hours=env.int("EMAIL_2FA_EXPIRY_HOURS"))
 PASSWORD_RESET_EXPIRY_TIME = timedelta(hours=env.int("EMAIL_PASSWORD_RESET_EXPIRY_HOURS"))
 
-MAX_RESET_ATTEMPTS = 5
-MAX_LOGIN_ATTEMPTS = 5
 
 # Internationalization
 
@@ -526,16 +524,16 @@ if env.bool("USE_S3"):
         "file_overwrite": False,
     }
 
-    if aws_session_profile := env.str("AWS_S3_SESSION_PROFILE", default=None):
+    if aws_session_profile := env.str("AWS_S3_SESSION_PROFILE", default=""):
         default_storage_options["session_profile"] = aws_session_profile
-    elif aws_access_key := env.str("AWS_ACCESS_KEY_ID", default=None):
+    elif aws_access_key := env.str("AWS_ACCESS_KEY_ID", default=""):
         default_storage_options["access_key"] = aws_access_key
         default_storage_options["secret_key"] = env.str("AWS_SECRET_ACCESS_KEY")
 
-    if default_prefix := env.str("AWS_S3_DEFAULT_PREFIX", default=None):
+    if default_prefix := env.str("AWS_S3_DEFAULT_PREFIX", default=""):
         default_storage_options["location"] = default_prefix
 
-    if custom_domain := env.str("AWS_S3_DEFAULT_CUSTOM_DOMAIN", default=None):
+    if custom_domain := env.str("AWS_S3_DEFAULT_CUSTOM_DOMAIN", default=""):
         public_storage_options["custom_domain"] = custom_domain
 
     public_storage_options = deepcopy(default_storage_options)
@@ -543,10 +541,10 @@ if env.bool("USE_S3"):
         public_storage_options["default_acl"] = public_acl
     if public_bucket_name := env.str("AWS_S3_STORAGE_PUBLIC_BUCKET_NAME"):
         public_storage_options["bucket_name"] = public_bucket_name
-    if public_prefix := env.str("AWS_S3_PUBLIC_PREFIX", default=None):
+    if public_prefix := env.str("AWS_S3_PUBLIC_PREFIX", default=""):
         public_storage_options["location"] = public_prefix
     if custom_domain := (
-        env.str("AWS_S3_CUSTOM_DOMAIN", default=None) or env.str("AWS_S3_PUBLIC_CUSTOM_DOMAIN", default=None)
+        env.str("AWS_S3_CUSTOM_DOMAIN", default="") or env.str("AWS_S3_PUBLIC_CUSTOM_DOMAIN", default="")
     ):
         public_storage_options["custom_domain"] = custom_domain
 elif USE_AZURE:
@@ -554,7 +552,7 @@ elif USE_AZURE:
     static_storage = "storages.backends.azure_storage.AzureStorage"
 
     # https://django-storages.readthedocs.io/en/latest/backends/azure.html
-    if azure_connection_string := env("AZURE_CONNECTION_STRING", default=None):
+    if azure_connection_string := env.str("AZURE_CONNECTION_STRING", default=""):
         default_storage_options["connection_string"] = azure_connection_string
     else:
         default_storage_options["account_name"] = env("AZURE_ACCOUNT_NAME")
