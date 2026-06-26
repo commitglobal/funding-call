@@ -35,8 +35,6 @@ def global_state(get_response: Callable[[HttpRequest], HttpResponse]) -> Callabl
         share(
             request=request,
             # Computed properties:
-            deactivate_nav_banner=settings.DEACTIVATE_NAV_BANNER,
-            activate_new_cookie_banners=settings.ACTIVATE_NEW_COOKIE_BANNERS,
             flash_messages=extract_messages(request),
             homepage_url=settings.HOMEPAGE_URL,
             cookie_policy_url=reverse_lazy("policy_cookies"),

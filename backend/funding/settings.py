@@ -123,6 +123,8 @@ env = environ.Env(
     EMAIL_2FA_EXPIRY_HOURS=(int, 4),
     EMAIL_PASSWORD_RESET_EXPIRY_HOURS=(int, 4),
     EMAIL_VERIFICATION_EXPIRY_HOURS=(int, 96),  # 4 days
+    # other settings
+    DEACTIVATE_COOKIE_BANNERS=(bool, False),
     # maintenance settings
     ENABLE_MAINTENANCE_MODE=(bool, False),
     MAINTENANCE_MESSAGE=(str, ""),
@@ -445,8 +447,6 @@ EMAIL_BACKEND = env.str("EMAIL_BACKEND")
 EMAIL_SEND_METHOD = env.str("EMAIL_SEND_METHOD")
 
 # Email flags
-DEACTIVATE_STATUS_EMAILS = env.bool("DEACTIVATE_STATUS_EMAILS")
-
 DEFAULT_RECEIVE_EMAIL = env("DEFAULT_RECEIVE_EMAIL")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 NO_REPLY_EMAIL = env("NO_REPLY_EMAIL")
@@ -637,10 +637,7 @@ HOMEPAGE_URL = env.str("HOMEPAGE_URL")
 
 
 # Do not show some components (generally, in the iframes)
-DEACTIVATE_NAV_BANNER = env.bool("DEACTIVATE_NAV_BANNER")
 DEACTIVATE_COOKIE_BANNERS = env.bool("DEACTIVATE_COOKIE_BANNERS")
-ACTIVATE_NEW_COOKIE_BANNERS = env.bool("ACTIVATE_NEW_COOKIE_BANNERS")
-
 
 # Default primary key field type
 

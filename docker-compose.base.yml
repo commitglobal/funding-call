@@ -30,7 +30,7 @@ services:
   db_base_mysql:
     extends:
       service: db_base
-    image: mysql:9.7.0
+    image: mysql:9.7
     volumes:
       - funding_call_mysql:/var/lib/mysql
     environment:

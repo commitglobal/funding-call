@@ -7,7 +7,8 @@ help:                             ## Display a help message detailing commands a
 ## [Managing the project]
 ### Stopping the containers and dropping the databases
 stop-sqlite:                      ## stops the sqlite dev project
-	docker compose down -t 60
+# 	docker compose down -t 60
+	echo ""
 
 drop-sqlite:                      ## stops the sqlite dev project
 	docker compose down -v -t 60
@@ -169,7 +170,7 @@ tests-cover:                      ## run the tests with coverage
 clean-docker:                     ## stop docker containers and remove orphaned images and volumes
 	docker compose -f docker-compose.mysql.yml down -t 60
 	docker compose -f docker-compose.psql.yml down -t 60
-	docker compose down -t 60
+# 	docker compose down -t 60
 	docker compose -f docker-compose.prod.yml down -t 60
 	docker system prune -f
 
