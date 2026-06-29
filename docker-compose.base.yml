@@ -46,7 +46,7 @@ services:
       service: db_base
     image: postgres:18.4
     volumes:
-      - funding_call_psql:/var/lib/postgresql/data
+      - funding_call_psql:/var/lib/postgresql
     environment:
       POSTGRES_DB: "${DATABASE_NAME}"
       POSTGRES_USER: "${DATABASE_USER}"

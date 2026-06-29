@@ -139,7 +139,7 @@ class FinancingDomain(EditionRelatedModel, CommonTimeStampModel):
     objects = models.Manager()
 
     class Meta:  # type: ignore
-        ordering = ("name",)
+        ordering = ("title",)
         verbose_name = _("financing domain")
         verbose_name_plural = _("financing domains")
 
@@ -287,7 +287,7 @@ class ProjectComment(ProjectRelatedModel, CommonTimeStampModel):
     User comment about a project
     """
     
-    author = models.ForeignKey(User, verbose_name="user", on_delete=models.SET_NULL)
+    author = models.ForeignKey(User, verbose_name="user", null=True, blank=True, on_delete=models.SET_NULL)
     parent_comment = models.ForeignKey("ProjectComment", verbose_name="parent comment", on_delete=models.CASCADE)
     title = TranslateableTextField(verbose_name="title", blank=True, null=False, default=dict)
     message = TranslateableTextField(verbose_name="message", blank=True, null=False, default=dict)

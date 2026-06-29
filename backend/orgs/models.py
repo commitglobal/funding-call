@@ -77,7 +77,7 @@ class OrganizationDocument(OrganizationRelatedModel):
         help_text=_("If the user entered a link instead of a file upload"),
     )
     referencing_snapshots = models.ManyToManyField(
-        OrganizationDetailsSnapshot, verbose_name="referencing snapshots", blank=True, null=True
+        OrganizationDetailsSnapshot, verbose_name="referencing snapshots"
     )
 
     # Model managers
