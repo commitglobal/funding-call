@@ -44,63 +44,63 @@ if is_enabled "${RUN_COLLECT_STATIC}"; then
     python3 manage.py collectstatic --noinput
 fi
 
-# Seed the default user groups
-if is_enabled "${RUN_SEED_GROUPS}"; then
-    echo "Creating default groups"
-    python3 manage.py seed_groups
-fi
+# # Seed the default user groups
+# if is_enabled "${RUN_SEED_GROUPS}"; then
+#     echo "Creating default groups"
+#     python3 manage.py seed_groups
+# fi
 
-# Seed the default locations
-if is_enabled "${RUN_SEED_LOCATIONS}"; then
-    echo "Creating default locations if the table is empty"
-    python3 manage.py seed_locations
-fi
+# # Seed the default locations
+# if is_enabled "${RUN_SEED_LOCATIONS}"; then
+#     echo "Creating default locations if the table is empty"
+#     python3 manage.py seed_locations
+# fi
 
-# Create the website admin user
-if is_enabled "${RUN_CREATE_ADMIN}"; then
-    echo "Running the admin seed script"
+# # Create the website admin user
+# if is_enabled "${RUN_CREATE_ADMIN}"; then
+#     echo "Running the admin seed script"
 
-    python3 manage.py seed_superadmin \
-        --first_name "${SEED_ADMIN_FIRST_NAME}" \
-        --last_name "${SEED_ADMIN_LAST_NAME}"
-fi
+#     python3 manage.py seed_superadmin \
+#         --first_name "${SEED_ADMIN_FIRST_NAME}" \
+#         --last_name "${SEED_ADMIN_LAST_NAME}"
+# fi
 
-# Create the Django Admin super user
-if is_enabled "${RUN_CREATE_SUPER_USER:-False}"; then
-    echo "Running the superuser seed script"
+# # Create the Django Admin super user
+# if is_enabled "${RUN_CREATE_SUPER_USER:-False}"; then
+#     echo "Running the superuser seed script"
 
-    python3 manage.py seed_djangoadmin \
-        --first_name "${DJANGO_ADMIN_FIRST_NAME}" \
-        --last_name "${DJANGO_ADMIN_LAST_NAME}"
-fi
+#     python3 manage.py seed_djangoadmin \
+#         --first_name "${DJANGO_ADMIN_FIRST_NAME}" \
+#         --last_name "${DJANGO_ADMIN_LAST_NAME}"
+# fi
 
-# Start the task queue heartbeat scheduler
-echo "Starting the task queue heartbeat scheduler"
-python3 manage.py schedule_qheartbeat
+# # Start the task queue heartbeat scheduler
+# echo "Starting the task queue heartbeat scheduler"
+# python3 manage.py schedule_qheartbeat
 
-echo "######    Cron job to check if the task queue is stuck"
-(
-    crontab -l
-    echo "*/30 * * * * /opt/venv/bin/python3 /var/www/funding_call/backend/manage.py qheartbeat --check-minutes 25"
-) | crontab -
+# echo "######    Cron job to check if the task queue is stuck"
+# (
+#     crontab -l
+#     echo "*/30 * * * * /opt/venv/bin/python3 /var/www/funding_call/backend/manage.py qheartbeat --check-minutes 25"
+# ) | crontab -
 
 
-# Set the staff flag for all users with a role that should have it
-echo "Setting the staff flag based on the ENABLE_DJANGO_ADMIN for all users with the superadmin role"
-python3 manage.py set_staff_flag
+# # Set the staff flag for all users with a role that should have it
+# echo "Setting the staff flag based on the ENABLE_DJANGO_ADMIN for all users with the superadmin role"
+# python3 manage.py set_staff_flag
 
-# Start the session clean-up schedule
-echo "Starting the session clean-up scheduler"
-python3 manage.py schedule_session_cleanup
+# # Start the session clean-up schedule
+# echo "Starting the session clean-up scheduler"
+# python3 manage.py schedule_session_cleanup
 
-# Start the session clean-up schedule
-echo "Starting the expired accounts clean-up scheduler"
-python3 manage.py schedule_expired_accounts_cleanup
+# # Start the session clean-up schedule
+# echo "Starting the expired accounts clean-up scheduler"
+# python3 manage.py schedule_expired_accounts_cleanup
 
-# Start the expired auditlog clean-up schedule
-echo "Starting the expired auditlog clean-up scheduler"
-python3 manage.py schedule_auditlog_cleanup
+# # Start the expired auditlog clean-up schedule
+# echo "Starting the expired auditlog clean-up scheduler"
+# python3 manage.py schedule_auditlog_cleanup
 
-# Flush the cache
-echo "Flushing the cache"
-python3 manage.py flush_cache
+# # Flush the cache
+# echo "Flushing the cache"
+# python3 manage.py flush_cache
