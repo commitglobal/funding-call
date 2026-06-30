@@ -17,7 +17,7 @@ export function ProfileDropdown({ is_authenticated, user, show_version_info }: A
   const { post } = useForm();
   const handleSignOut = useCallback(() => {
     post(
-      apiPostUrls.usersLogout(user?.is_staff_member ? 'staff' : 'applicants'),
+      apiPostUrls.usersLogout(),
     );
   }, [post, user?.is_staff_member]);
 
