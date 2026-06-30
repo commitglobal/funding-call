@@ -16,4 +16,3 @@ class CommonTimeStampModel(models.Model):
 
     class Meta:
         abstract = True
-

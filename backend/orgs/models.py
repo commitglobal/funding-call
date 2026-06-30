@@ -2,8 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from utils.models import CommonTimeStampModel
 from users.models import User
+from utils.models import CommonTimeStampModel
 
 
 class Organization(CommonTimeStampModel):
@@ -76,9 +76,7 @@ class OrganizationDocument(OrganizationRelatedModel):
         default="",
         help_text=_("If the user entered a link instead of a file upload"),
     )
-    referencing_snapshots = models.ManyToManyField(
-        OrganizationDetailsSnapshot, verbose_name="referencing snapshots"
-    )
+    referencing_snapshots = models.ManyToManyField(OrganizationDetailsSnapshot, verbose_name="referencing snapshots")
 
     # Model managers
     objects = models.Manager()
@@ -90,5 +88,3 @@ class OrganizationDocument(OrganizationRelatedModel):
     @staticmethod
     def sweep_items() -> models.QuerySet:
         return OrganizationDocument.objects.filter(organization__isnull=True, referencing_snapshots__set=None).all()
-
-

@@ -17,7 +17,6 @@ from django.utils.translation import gettext_lazy as _
 
 from utils.encoder import CustomJsonEncoder
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -681,4 +680,3 @@ DASHBOARD_PAGE_SIZE = 20
 
 # Trim the dashboard search term to this maximum length
 DASHBOARD_SEARCH_LENGTH = 300
-
