@@ -1,11 +1,8 @@
 import { applicantsUrls } from '@/constants/urlsConfig';
 import { LinkButton } from '@components/LinkButton';
-import { usePage } from '@inertiajs/react';
-import { HomePageProps } from './HomePageProps';
+
 
 export function HeaderFragment() {
-  const {} = usePage<HomePageProps>();
-
   return (
     <div>
       <h2 className='font-amalia-bold text-4xl lg:text-6xl text-black mb-5'>
