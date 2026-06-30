@@ -1,3 +1,9 @@
-from django.test import TestCase
+from django.test import Client, TestCase
 
-# Create your tests here.
+
+class HomepageTest(TestCase):
+    def test_homepage_load(self):
+        c = Client()
+        response = c.get("/")
+
+        self.assertEqual(response.status_code, 200)
