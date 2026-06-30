@@ -432,9 +432,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
-    {
-        "NAME": "users.password_validation.SpecialCharacterValidator",
-    },
+    # {
+    #     "NAME": "users.password_validation.SpecialCharacterValidator",
+    # },
 ]
 
 ENABLE_2FA = env.bool("ENABLE_2FA")

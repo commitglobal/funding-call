@@ -65,14 +65,14 @@ fi
 #         --last_name "${SEED_ADMIN_LAST_NAME}"
 # fi
 
-# # Create the Django Admin super user
-# if is_enabled "${RUN_CREATE_SUPER_USER:-False}"; then
-#     echo "Running the superuser seed script"
+# Create the Django Admin super user
+if is_enabled "${RUN_CREATE_SUPER_USER:-False}"; then
+    echo "Running the superuser seed script"
 
-#     python3 manage.py seed_djangoadmin \
-#         --first_name "${DJANGO_ADMIN_FIRST_NAME}" \
-#         --last_name "${DJANGO_ADMIN_LAST_NAME}"
-# fi
+    python3 manage.py seed_djangoadmin \
+        --first_name "${DJANGO_ADMIN_FIRST_NAME}" \
+        --last_name "${DJANGO_ADMIN_LAST_NAME}"
+fi
 
 # # Start the task queue heartbeat scheduler
 # echo "Starting the task queue heartbeat scheduler"
