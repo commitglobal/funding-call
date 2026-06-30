@@ -37,7 +37,7 @@ def global_state(get_response: Callable[[HttpRequest], HttpResponse]) -> Callabl
             # Computed properties:
             flash_messages=extract_messages(request),
             homepage_url=settings.HOMEPAGE_URL,
-            cookie_policy_url=reverse_lazy("policy_cookies"),
+            cookie_policy_url="",
             # Lazily computed properties:
             is_authenticated=lambda: request.user.is_authenticated,
             user=lambda: User.to_dict(request.user) if request.user.is_authenticated else None,

@@ -345,7 +345,7 @@ MIDDLEWARE = [
     "inertia.middleware.InertiaMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
     # Funding Call middlewares:
-    "cms.middleware.maintenance_mode",  # noqa
+    "editions.middleware.maintenance_mode",  # noqa
     "users.middleware.global_state",  # noqa
 ]
 
