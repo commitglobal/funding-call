@@ -4,9 +4,7 @@ import { usePage } from '@inertiajs/react';
 import { HomePageProps } from './HomePageProps';
 
 export function HeaderFragment() {
-  const {
-    props: {},
-  } = usePage<HomePageProps>();
+  const {} = usePage<HomePageProps>();
 
   return (
     <div>
