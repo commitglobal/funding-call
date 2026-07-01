@@ -1,0 +1,149 @@
+[project]
+name = "funding-call"
+version = "0.1.0"
+description = "Funding Call"
+requires-python = ">=3.13"
+
+dependencies = [
+    "blessed~=1.44.0",
+    "chardet~=7.4.3",
+    "django~=6.0.6",
+    "django-auditlog~=3.4.1",
+    "django-cors-headers~=4.9.0",
+    "django-csp~=4.0.0",
+    "django-environ~=0.14.0",
+    "django-localflavor~=5.0.0",
+    "django-q2~=1.10.0",
+    "django-recaptcha~=4.1.0",
+    "django-ses~=4.7.2",
+    "django-storages[azure]~=1.14.6",
+    "django-vite~=3.1.0",
+    "gevent~=26.5.0",
+    "gunicorn~=26.0.0",
+    "inertia-django~=1.2.0",
+    "pillow~=12.2.0",
+    "psutil~=7.2.2",
+    "psycopg2-binary~=2.9.12",
+    "pymysql~=1.2.0",
+    "reportlab~=5.0.0",
+    "requests~=2.34.2",
+    "sentry-sdk[django]~=2.63.0",
+    "unidecode~=1.4.0",
+    "whitenoise~=6.12.0",
+]
+
+
+[dependency-groups]
+test = [
+    "coverage~=7.13.4",
+    "pytest~=9.0.2",
+    "pytest-cov~=7.0.0",
+    "pytest-django~=4.12.0",
+    "pytest-mock~=3.15.1",
+    "pytest-xdist~=3.8.0",
+    "tblib~=3.2.2",
+]
+ruff = [
+    "ruff~=0.15.18",
+]
+dev = [
+    "debugpy~=1.8.20",
+    "faker~=40.8.0",
+    "openpyxl~=3.1.5",
+    "pandas~=2.3.3",
+    "pip-tools~=7.5.3",
+    "pre-commit~=4.5.1",
+    { include-group = "ruff" },
+    { include-group = "test" },
+]
+
+
+[tool.pytest]
+DJANGO_SETTINGS_MODULE = "funding.test_settings"
+
+python_files = [
+    "test.py",
+    "test*.py",
+    "*test.py",
+    "*tests.py",
+    "backend/*/tests/*.py",
+]
+filterwarnings = [
+    "ignore:The django.utils.baseconv module is deprecated."
+]
+
+
+[lint]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+ignore = []
+
+select = [
+    "DJ", # Flake8-Django - https://docs.astral.sh/ruff/rules/#flake8-django-dj
+    "E", # Pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
+    "W", # Pycodestyle warnings - https://docs.astral.sh/ruff/rules/#warning-w
+    "F", # Pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
+    "T10", # Debugger - https://docs.astral.sh/ruff/rules/#flake8-debugger-t10
+    "T20", # Remove print/pprint statements - https://docs.astral.sh/ruff/rules/#flake8-print-t20
+]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+unfixable = []
+
+
+[tool.ruff]
+# Enable the following rules
+# More info: https://docs.astral.sh/ruff/rules/
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "migrations",
+    "auditlog", # vendored library
+]
+
+# Same as Black.
+line-length = 120
+
+# Assume Python 3.13.
+target-version = "py313"
+
+[tool.ruff.format]
+exclude = [
+    "migrations"
+]
+
+[tool.ruff.lint.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[tool.ruff.lint.extend-per-file-ignores]
+"users/models.py" = ["DJ001"]
+"test_settings.py" = ["F403", "F405"]
+"*/__init__.py" = ["F401"]
+
+
+[tool.uv]
+package = false

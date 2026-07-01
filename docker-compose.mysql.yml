@@ -1,0 +1,24 @@
+name: funding_call_dev
+
+services:
+
+  webapp_mysql:
+    extends:
+      file: docker-compose.base.yml
+      service: funding_call_dev_base
+    environment:
+      - "DATABASE_ENGINE=mysql"
+      - "DATABASE_HOST=funding_call_db_dev"
+      - "DATABASE_PORT=3306"
+    depends_on:
+      - db_mysql_dev
+
+  db_mysql_dev:
+    extends:
+      file: docker-compose.base.yml
+      service: db_base_mysql
+    volumes:
+      - ./docker/init-mysql:/docker-entrypoint-initdb.d
+
+volumes:
+  funding_call_mysql:

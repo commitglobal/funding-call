@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+
+@theme {
+    --color-primary-light: #FFF0A6;
+    --color-primary-main: #FEE600;
+    --color-primary-dark: #FFD403;
+
+    --color-secondary-main: #E3F1EA;
+
+    --color-yellow-400: #FFF0A6;
+    --color-yellow-500: #FEE600;
+    --color-yellow-600: #F9BB30;
+
+    --color-gray-400: #F1EDE6;
+    --color-gray-500: #7E827F;
+
+    --color-black: #2B2D33;
+    --color-warm-grey: #F1EDE6;
+    --color-off-black: #2B2D33;
+    --color-green-highlight: #A3E2CC;
+    --color-green-mid-tone: #67D0AB;
+    --color-purple-highlight: #9D88D9;
+    --color-purple-mid-tone: #6A4CAD;
+    --color-error: #C65C4A;
+
+    --text-2xs: 0.625rem;
+    --text-xs: 0.75rem;
+}
+
+@layer base {
+    *,
+    ::before,
+    ::after {
+        @apply border-gray-200;
+    }
+}
+
+@layer utilities {
+    html,
+    body,
+    #app {
+        height: 100vh;
+        scroll-padding-top: 64px;
+        margin: 0 !important;
+    }
+}
+
+@layer components {
+    .text-marker-underline {
+        --underline-intrinsic-width: 8;
+        --underline-cap-width: 1px;
+        --underline-width: 12;
+        --underline-width-scale: calc(var(--underline-width) / var(--underline-intrinsic-width));
+        --underline-offset-y: -2px;
+        background-position-x: calc(var(--underline-width-scale)),
+        0,
+        100%;
+        background-position-y: calc(100% - var(--underline-offset-y) * -1);
+        background-size: calc(100% - calc(var(--underline-cap-width) * var(--underline-width-scale) * 2)) calc(var(--underline-width) * 1px),
+        auto calc(var(--underline-width) * 1px),
+        auto calc(var(--underline-width) * 1px);
+        @apply bg-linear-to-t from-[#9D88D980] to-[#9D88D980] bg-no-repeat inline
+    }
+}

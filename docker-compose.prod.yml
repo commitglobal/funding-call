@@ -1,0 +1,27 @@
+name: funding_call_multi
+
+services:
+
+  webapp:
+    extends:
+      file: docker-compose.base.yml
+      service: funding_call_base
+    build:
+      context: .
+      dockerfile: ./docker/dockerfiles/Dockerfile
+    volumes:
+      - ./backend/media:/var/www/funding_call/backend/media
+    environment:
+      - "ENVIRONMENT=production"
+    ports:
+      - "${WEBAPP_PORT:-8080}:80"
+    depends_on:
+      - db_psql
+
+  db_psql:
+    extends:
+      file: docker-compose.base.yml
+      service: db_base_psql
+
+volumes:
+  funding_call_psql:
