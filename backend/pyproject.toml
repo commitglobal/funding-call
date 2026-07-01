@@ -58,7 +58,7 @@ dev = [
 ]
 
 
-[pytest]
+[tool.pytest]
 DJANGO_SETTINGS_MODULE = "funding.test_settings"
 
 python_files = [
