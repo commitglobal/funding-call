@@ -1,21 +1,18 @@
 on:
   push:
     branches:
-      - 'main'
+      - "main"
     tags:
-      - 'v*'
+      - "v*"
 
 name: Build Docker image
 
 jobs:
-
   build:
-    name: Build Docker image
-    uses: code4romania/.github/.github/workflows/build-push-image-ecr.yml@main
+    uses: commitglobal/.github/.github/workflows/build-push-image.yml@main
     with:
-      image_name: funding_call
-      region: eu-west-1
-      context: ./
+      images: commitglobal/funding-call
       dockerfile: ./docker/dockerfiles/Dockerfile
     secrets:
-      role_to_assume: ${{ secrets.ROLE_TO_ASSUME }}
+      username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      token: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
