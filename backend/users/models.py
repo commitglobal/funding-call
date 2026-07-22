@@ -1,8 +1,14 @@
+from auditlog.registry import auditlog
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, UserManager
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
+
+from utils.models import CommonTimeStampModel, MaxFileSizeValidator
+from utils.storage import select_public_storage
 
 
 class CustomUserManager(UserManager):
@@ -52,6 +58,10 @@ class User(AbstractUser):
 
     email = models.EmailField(verbose_name=_("email address"), blank=False, null=False, unique=True)
 
+    # Type hinting for related models
+    profile: "models.manager.RelatedManager[Profile]"
+
+    # Model managers
     objects = CustomUserManager()
 
     USERNAME_FIELD = "email"
@@ -64,6 +74,81 @@ class User(AbstractUser):
             models.UniqueConstraint(Lower("email"), name="email_unique"),
         ]
 
+    def __str__(self) -> str:
+        return _("User {id}: {email}").format(id=self.pk, title=self.email)
+
     def to_dict(self):
         # TODO
         return {}
+
+
+class Profile(models.Model):
+    """
+    Additional user information, not related to the authentication process
+    """
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_("user"),
+        related_name="profile",
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE,
+    )
+
+    picture = models.FileField(
+        verbose_name=_("picture"),
+        upload_to="profiles_public/%Y/%W/",
+        storage=select_public_storage,
+        blank=True,
+        null=True,
+        validators=(
+            FileExtensionValidator(allowed_extensions=("jpg", "jpeg", "png")),
+            MaxFileSizeValidator(settings.MAX_DOCUMENT_SIZE),
+        ),
+    )
+
+    accepted_newsletter = models.DateTimeField(verbose_name=_("Accepted to receive newsletters"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("profile")
+        verbose_name_plural = _("profiles")
+        ordering = ["user__email"]
+
+    def __str__(self) -> str:
+        return _("(User {user_id}) Profile {id}").format(user_id=self.user.pk, id=self.pk)
+
+
+class LoginAttempt(CommonTimeStampModel):
+    """
+    Store user login attempts
+    """
+
+    email = models.EmailField(verbose_name=_("email"), blank=True, null=False, editable=False)
+    user = models.ForeignKey(
+        User,
+        verbose_name=_("user"),
+        related_name="logins",
+        blank=True,
+        null=True,
+        editable=False,
+        on_delete=models.SET_NULL,
+        help_text=_("successful login user account"),
+    )
+    success = models.BooleanField(verbose_name=_("success"), editable=False, default=False)
+    remote_ua = models.CharField(
+        verbose_name=_("remote user agent"), max_length=150, blank=True, null=False, editable=False
+    )
+    remote_addr = models.GenericIPAddressField(blank=True, null=True, editable=False, verbose_name=_("remote address"))
+
+    class Meta:  # type: ignore
+        verbose_name = _("login attempt")
+        verbose_name_plural = _("login attempts")
+        ordering = ("-created_at",)
+
+    def __str__(self) -> str:
+        return _("Login {id} Email {email}").format(id=self.pk, email=self.email)
+
+
+auditlog.register(Profile)
+auditlog.register(User, exclude_fields=["password"])

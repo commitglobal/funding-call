@@ -105,7 +105,7 @@ class EditionPublicDocument(EditionRelatedModel, CommonTimeStampModel):
 
     uploaded_document = models.FileField(
         verbose_name=_("uploaded document"),
-        upload_to="editions_public/%Y/%m/",
+        upload_to="editions_public/%Y/%W/",
         storage=select_public_storage,
         blank=True,
         null=True,
@@ -414,7 +414,7 @@ class ProjectDataDocument(ProjectDataRelatedModel, CommonTimeStampModel):
 
     uploaded_document = models.FileField(
         verbose_name=_("uploaded document"),
-        upload_to="projects/%Y/%m/",
+        upload_to="projects/%Y/%W/",
         blank=True,
         null=True,
     )
