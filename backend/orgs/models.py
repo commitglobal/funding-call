@@ -64,7 +64,7 @@ class OrganizationDocument(OrganizationRelatedModel):
 
     uploaded_document = models.FileField(
         verbose_name=_("uploaded document"),
-        upload_to="orgs/%Y/%m/",
+        upload_to="orgs/%Y/%W/",
         blank=True,
         null=True,
     )

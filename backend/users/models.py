@@ -97,7 +97,7 @@ class Profile(models.Model):
 
     picture = models.FileField(
         verbose_name=_("picture"),
-        upload_to="profiles_public/%Y/%m/",
+        upload_to="profiles_public/%Y/%W/",
         storage=select_public_storage,
         blank=True,
         null=True,
