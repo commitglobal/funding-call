@@ -1,3 +1,4 @@
+from auditlog.registry import auditlog
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -6,7 +7,7 @@ from django.db import models
 from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
 
-from utils.models import MaxFileSizeValidator
+from utils.models import CommonTimeStampModel, MaxFileSizeValidator
 from utils.storage import select_public_storage
 
 
@@ -116,3 +117,38 @@ class Profile(models.Model):
 
     def __str__(self) -> str:
         return _("(User {user_id}) Profile {id}").format(user_id=self.user.pk, id=self.pk)
+
+
+class LoginAttempt(CommonTimeStampModel):
+    """
+    Store user login attempts
+    """
+
+    email = models.EmailField(verbose_name=_("email"), blank=True, null=False, editable=False)
+    user = models.ForeignKey(
+        User,
+        verbose_name=_("user"),
+        related_name="logins",
+        blank=True,
+        null=True,
+        editable=False,
+        on_delete=models.SET_NULL,
+        help_text=_("successful login user account"),
+    )
+    success = models.BooleanField(verbose_name=_("success"), editable=False, default=False)
+    remote_ua = models.CharField(
+        verbose_name=_("remote user agent"), max_length=150, blank=True, null=False, editable=False
+    )
+    remote_addr = models.GenericIPAddressField(blank=True, null=True, editable=False, verbose_name=_("remote address"))
+
+    class Meta:  # type: ignore
+        verbose_name = _("login attempt")
+        verbose_name_plural = _("login attempts")
+        ordering = ("-created_at",)
+
+    def __str__(self) -> str:
+        return _("Login {id} Email {email}").format(id=self.pk, email=self.email)
+
+
+auditlog.register(Profile)
+auditlog.register(User, exclude_fields=["password"])
