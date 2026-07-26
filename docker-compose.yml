@@ -1,0 +1,16 @@
+name: funding_call_dev
+
+services:
+
+  webapp_sqlite:
+    extends:
+      file: docker-compose.base.yml
+      service: funding_call_dev_base
+    volumes:
+      - ./backend/.db_sqlite:/var/www/funding_call/backend/.db_sqlite
+    environment:
+      - "DATABASE_ENGINE=sqlite3"
+    ports:
+      - "5678:5678"
+      - "5677:5677"
+
