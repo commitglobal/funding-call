@@ -75,7 +75,7 @@ class User(AbstractUser):
         ]
 
     def __str__(self) -> str:
-        return _("User {id}: {email}").format(id=self.pk, title=self.email)
+        return _("User {id}: {email}").format(id=self.pk, email=self.email)
 
     def to_dict(self):
         # TODO
