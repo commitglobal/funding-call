@@ -8,6 +8,7 @@ dependencies = [
     "blessed~=1.44.0",
     "chardet~=7.4.3",
     "django~=6.0.6",
+    "django-allauth[socialaccount]~=65.18.0",
     "django-auditlog~=3.4.1",
     "django-cors-headers~=4.9.0",
     "django-csp~=4.0.0",

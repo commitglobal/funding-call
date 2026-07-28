@@ -308,6 +308,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.staticfiles",
     # Third party apps:
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    # TODO: include the providers you want to enable like "allauth.socialaccount.providers.amazon_cognito"
     "csp",
     "auditlog",
     "corsheaders",
@@ -342,6 +346,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "inertia.middleware.InertiaMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
     # Funding Call middlewares:
     "editions.middleware.maintenance_mode",  # noqa
@@ -417,6 +422,7 @@ else:
         }
     }
 
+
 # Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -440,6 +446,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ENABLE_2FA = env.bool("ENABLE_2FA")
 
 AUTH_USER_MODEL = "users.User"
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    # `allauth` specific authentication methods, such as login by email
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
 
 # Email settings
 EMAIL_BACKEND = env.str("EMAIL_BACKEND")
