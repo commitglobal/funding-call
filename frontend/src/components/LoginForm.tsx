@@ -9,7 +9,7 @@ import { InternalLink } from './InternalLink';
 import { UserRouteType } from '@/types/User';
 
 type LoginFormData = {
-  email: string;
+  login: string;
   password: string;
   remember: boolean;
 };
@@ -23,7 +23,7 @@ export function LoginForm({ userRouteType = 'applicants' }: LoginFormProps) {
     props: { errors },
   } = usePage();
   const { data, setData, post, processing } = useForm<LoginFormData>({
-    email: '',
+    login: '',
     password: '',
     remember: false,
   });
@@ -44,11 +44,11 @@ export function LoginForm({ userRouteType = 'applicants' }: LoginFormProps) {
     <>
       <form className='flex flex-col gap-y-6' onSubmit={handleSubmit} target="_blank">
         <InputField
-          errors={formErrors?.email}
+          errors={formErrors?.login}
           label='Adresă de mail'
-          name='email'
-          onChange={handleChange<LoginFormData>('email', setData)}
-          value={data.email}
+          name='login'
+          onChange={handleChange<LoginFormData>('login', setData)}
+          value={data.login}
         />
 
         <InputField

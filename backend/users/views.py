@@ -1,5 +1,7 @@
+import json
+
 from allauth.account.views import LoginView
-from inertia import inertia, InertiaResponse
+from inertia import InertiaResponse
 
 
 class FundingLoginView(LoginView):
@@ -9,26 +11,23 @@ class FundingLoginView(LoginView):
             "Account/Login/Index",
             props={
                 "class_view": True,
-            }
+            },
         )
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+    def get_form_kwargs(self) -> dict:
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        if self.request.method in ("POST", "PUT"):
+            kwargs.update(
+                {
+                    "data": json.loads(self.request.body),
+                    "files": self.request.FILES,
+                }
+            )
+        return kwargs
 
     def form_invalid(self, form, **kwargs):
-        print("IIIIIIIIIII")
-        return InertiaResponse(
-            self.request,
-            "Account/Login/Index",
-            props={"valid": False}
-        )
-
+        return InertiaResponse(self.request, "Account/Login/Index", props={"valid": False})
 
     def form_valid(self, form):
-        print("VVVVVVVVV")
-        return {"valid": True}
-    
+        return super().form_valid(form)

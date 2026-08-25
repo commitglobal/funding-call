@@ -720,3 +720,6 @@ DASHBOARD_PAGE_SIZE = 20
 
 # Trim the dashboard search term to this maximum length
 DASHBOARD_SEARCH_LENGTH = 300
+
+
+SITE_ID = 1
