@@ -15,10 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import path
+from django.urls import include, path
 
 from editions.views import temp_landing_page
+from users.views import FundingLoginView
 
 urlpatterns = [
     path("", temp_landing_page, name="landing-page"),
+    path("account/login/", FundingLoginView.as_view()),
+    path("account/", include("allauth.urls")),
 ]

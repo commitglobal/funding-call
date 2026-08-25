@@ -308,6 +308,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.staticfiles",
     # Third party apps:
+    "allauth",
+    "allauth.account",
+    "allauth.headless",
+    "allauth.mfa",
+    "allauth.socialaccount",
+    # TODO: include the providers you want to enable like "allauth.socialaccount.providers.amazon_cognito"
+    "allauth.usersessions",
     "csp",
     "auditlog",
     "corsheaders",
@@ -342,6 +349,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "inertia.middleware.InertiaMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
     # Funding Call middlewares:
     "editions.middleware.maintenance_mode",  # noqa
@@ -417,6 +425,7 @@ else:
         }
     }
 
+
 # Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -440,6 +449,37 @@ AUTH_PASSWORD_VALIDATORS = [
 ENABLE_2FA = env.bool("ENABLE_2FA")
 
 AUTH_USER_MODEL = "users.User"
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    # `allauth` specific authentication methods, such as login by email
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+# Allauth settings
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_SIGNUP_FIELDS = ["email*", "email2*", "password1*", "password2*"]
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
+ACCOUNT_LOGIN_BY_CODE_ENABLED = True
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
+
+# HEADLESS_ONLY = True
+# HEADLESS_FRONTEND_URLS = {
+#     "account_confirm_email": "/account/verify-email/{key}",
+#     "account_reset_password": "/account/password/reset",
+#     "account_reset_password_from_key": "/account/password/reset/key/{key}",
+#     "account_signup": "/account/signup",
+#     "socialaccount_login_error": "/account/provider/callback",
+# }
+# HEADLESS_SERVE_SPECIFICATION = True
+
+MFA_SUPPORTED_TYPES = ["totp", "recovery_codes", "webauthn"]
+MFA_PASSKEY_LOGIN_ENABLED = True
+MFA_PASSKEY_SIGNUP_ENABLED = True
+
 
 # Email settings
 EMAIL_BACKEND = env.str("EMAIL_BACKEND")
@@ -680,3 +720,6 @@ DASHBOARD_PAGE_SIZE = 20
 
 # Trim the dashboard search term to this maximum length
 DASHBOARD_SEARCH_LENGTH = 300
+
+
+SITE_ID = 1

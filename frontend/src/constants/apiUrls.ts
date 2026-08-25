@@ -9,7 +9,8 @@ export const apiGetUrls = {
 };
 
 export const apiPostUrls = {
-  usersLogout: () => buildUrl(['logout']),
+  usersLogout: () => buildUrl(['account', 'logout']),
+  usersLogin: () => buildUrl(['account', 'login']),
 };
 
 export const apiDelUrls = {
