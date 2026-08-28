@@ -1,7 +1,7 @@
 import { InternalLink } from '@/components/InternalLink';
 import { LoginForm } from '@/components/LoginForm';
 import { UsersFormContainer } from '@/components/UsersFormContainer';
-import { applicantsUrls } from '@/constants/urlsConfig';
+import { authUrls } from '@/constants/urlsConfig';
 import LayoutDefault from '@/layouts/LayoutDefault';
 import { useNotifyActions } from '@/stores/useNotifyStore';
 import { CommonProps } from '@/types/CommonProps';
@@ -27,7 +27,7 @@ export default function Index() {
               color='text-purple-600'
               fontSize='text-sm'
               name='Înregistrează-te acum'
-              to={applicantsUrls.register}
+              to={authUrls.register}
               underline={false}
             />
           </>

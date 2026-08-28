@@ -1,11 +1,8 @@
 import json
-from typing import Any
 
 from allauth.account.views import LoginView
-from django.http import HttpRequest
 from django.urls import reverse
-from django.views.decorators.cache import cache_control
-from inertia import InertiaResponse, inertia
+from inertia import InertiaResponse
 
 
 class FundingLoginView(LoginView):
