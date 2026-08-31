@@ -18,9 +18,9 @@ export const footerUrlsConfig: Record<string, UrlConfig> = {
   },
 };
 
-const applicants = 'applicants';
+const auth = 'auth';
 
-export const applicantsUrls = {
-  login: buildUrl([applicants, 'login']),
-  register: buildUrl([applicants, 'register']),
+export const authUrls = {
+  login: buildUrl([auth, 'login']),
+  register: buildUrl([auth, 'register']),
 };

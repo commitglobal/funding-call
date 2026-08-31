@@ -18,10 +18,9 @@ Including another URLconf
 from django.urls import include, path
 
 from editions.views import temp_landing_page
-from users.views import FundingLoginView
 
 urlpatterns = [
     path("", temp_landing_page, name="landing-page"),
-    path("account/login/", FundingLoginView.as_view()),
-    path("account/", include("allauth.urls")),
+    path("auth/", include("users.urls_auth")),
+    path("profile/", include("users.urls_profiles")),
 ]
