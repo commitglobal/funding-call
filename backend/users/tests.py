@@ -25,7 +25,7 @@ class FundingLoginViewTests(TestCase):
         response = self.client.get(self.login_url, HTTP_X_INERTIA="true")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["component"], "Account/Login/Index")
+        self.assertEqual(response.json()["component"], "Auth/Login/Index")
         self.assertTrue(response.json()["props"]["class_view"])
 
     def test_post_with_valid_json_credentials_logs_user_in_and_redirects(self):
@@ -57,5 +57,5 @@ class FundingLoginViewTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["component"], "Account/Login/Index")
+        self.assertEqual(response.json()["component"], "Auth/Login/Index")
         self.assertFalse(response.json()["props"]["valid"])
