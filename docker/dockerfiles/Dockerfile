@@ -81,7 +81,8 @@ RUN apk update && \
     apk --no-cache add \
     icu \
     gettext \
-    nginx
+    nginx \
+    mariadb-connector-c
 
 # configure process manager
 ARG S6_OVERLAY_VERSION=3.2.3.2
